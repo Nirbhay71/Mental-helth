@@ -1,3 +1,13 @@
+import express from "express";
+const app = express();
+
+app.get("/api/hello", (req, res) => {
+  res.send("Hello World");
+});
+
+app.listen(3000, () => console.log("Server running..."));
+
+
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
