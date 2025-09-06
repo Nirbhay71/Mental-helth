@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Mindful Space Dashboard</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<style type="text/tailwindcss">
+    :root {
+      --primary-50: #f0f9ff;
+      --primary-100: #e0f2fe;
+      --primary-200: #bae6fd;
+      --primary-300: #7dd3fc;
+      --primary-400: #38bdf8;
+      --primary-500: #0ea5e9;
+      --primary-600: #0284c7;
+      --primary-700: #0369a1;
+      --primary-800: #075985;
+      --primary-900: #0c4a6e;
+      --secondary-50: #f8fafc;
+      --secondary-100: #f1f5f9;
+      --secondary-200: #e2e8f0;
+      --secondary-300: #cbd5e1;
+      --secondary-400: #94a3b8;
+      --secondary-500: #64748b;
+      --secondary-600: #475569;
+      --secondary-700: #334155;
+      --secondary-800: #1e293b;
+      --secondary-900: #0f172a;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .chart-container {
+      position: relative;
+      height: 200px;
+    }
+  </style>
+</head>
+<body class="bg-secondary-50 text-secondary-800">
+<div class="flex h-screen">
+<aside class="w-64 bg-white border-r border-secondary-200 flex flex-col">
+<div class="h-16 flex items-center px-6 border-b border-secondary-200">
+<svg class="h-8 w-8 text-primary-500" fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><path d="M6 6H42L36 24L42 42H6L12 24L6 6Z" fill="currentColor"></path></svg>
+<h1 class="ml-3 text-xl font-bold text-secondary-800">Mindful Space</h1>
+</div>
+<nav class="flex-1 px-4 py-6 space-y-2">
+<a class="flex items-center px-4 py-2 text-secondary-600 hover:bg-primary-50 hover:text-primary-600 rounded-md" href="#">
+<span class="material-symbols-outlined mr-3">home</span>
+          Home
+        </a>
+<a class="flex items-center px-4 py-2 text-secondary-600 hover:bg-primary-50 hover:text-primary-600 rounded-md" href="#">
+<span class="material-symbols-outlined mr-3">groups</span>
+          Community
+        </a>
+<a class="flex items-center px-4 py-2 text-secondary-600 hover:bg-primary-50 hover:text-primary-600 rounded-md" href="#">
+<span class="material-symbols-outlined mr-3">library_books</span>
+          Resources
+        </a>
+<a class="flex items-center px-4 py-2 text-secondary-600 hover:bg-primary-50 hover:text-primary-600 rounded-md" href="#">
+<span class="material-symbols-outlined mr-3">support_agent</span>
+          Support
+        </a>
+<a class="flex items-center px-4 py-2 bg-primary-50 text-primary-600 rounded-md font-semibold" href="#">
+<span class="material-symbols-outlined mr-3">dashboard</span>
+            Dashboard
+        </a>
+</nav>
+</aside>
+<div class="flex-1 flex flex-col overflow-hidden">
+<header class="h-16 bg-white border-b border-secondary-200 flex items-center justify-end px-6">
+<div class="flex items-center gap-4">
+<button class="relative text-secondary-500 hover:text-secondary-700">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-primary-500 border-2 border-white"></span>
+</button>
+<div class="flex items-center gap-3">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDdh1L38FuniVeIuqMPp1qKwN1lhpnsNOjoNn096G9dudLhBDqDwduQtJkkgtyypt6o28wCc6SuFSAgp9S8DzWnjFpcJyMu1xFDi9616yd0THmTMmsG_J-b5vI_GradDvqYQXbfIStY0YV_cPp7ATfsrUqIsbny8P_02V2q76Tuhqk1vpiHt1Qb6rA3yxaBQvaYN6m4uu1Uyqx0tKHrx6L_f6frOX267GQ21QoollERmh0vSPBDVEADxoiFmU4CtkM3gYWF7ZwyrwLB");'></div>
+<div>
+<p class="font-semibold text-sm text-secondary-700">Admin User</p>
+<p class="text-xs text-secondary-500">admin@mindful.space</p>
+</div>
+</div>
+</div>
+</header>
+<main class="flex-1 overflow-x-hidden overflow-y-auto bg-secondary-50 p-8">
+<div class="max-w-7xl mx-auto">
+<div class="mb-8">
+<h2 class="text-3xl font-bold text-secondary-800">Dashboard</h2>
+<p class="text-secondary-500 mt-1">Key insights into platform activity and user engagement.</p>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<div class="lg:col-span-2 bg-white p-6 rounded-lg border border-secondary-200 shadow-sm">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="text-lg font-semibold text-secondary-800">Daily Active Users</h3>
+<p class="text-sm text-secondary-500">Last 7 Days</p>
+</div>
+<div class="text-right">
+<p class="text-3xl font-bold text-secondary-800">1,250</p>
+<p class="text-sm font-medium text-green-500 flex items-center justify-end">
+<span class="material-symbols-outlined text-base mr-1">arrow_upward</span>
+                      15%
+                    </p>
+</div>
+</div>
+<div class="h-64">
+<svg fill="none" height="100%" preserveAspectRatio="none" viewBox="0 0 478 160" width="100%" xmlns="http://www.w3.org/2000/svg">
+<path d="M0 112.5C18.1538 112.5 18.1538 29.5 36.3077 29.5C54.4615 29.5 54.4615 47.5 72.6154 47.5C90.7692 47.5 90.7692 95.5 108.923 95.5C127.077 95.5 127.077 40.5 145.231 40.5C163.385 40.5 163.385 102.5 181.538 102.5C199.692 102.5 199.692 65.5 217.846 65.5C236 65.5 236 51.5 254.154 51.5C272.308 51.5 272.308 122.5 290.462 122.5C308.615 122.5 308.615 150.5 326.769 150.5C344.923 150.5 344.923 11.5 363.077 11.5C381.231 11.5 381.231 85.5 399.385 85.5C417.538 85.5 417.538 130.5 435.692 130.5C453.846 130.5 453.846 33.5 472 33.5V160H0V112.5Z" fill="url(#paint0_linear_1)"></path>
+<path d="M0 112.5C18.1538 112.5 18.1538 29.5 36.3077 29.5C54.4615 29.5 54.4615 47.5 72.6154 47.5C90.7692 47.5 90.7692 95.5 108.923 95.5C127.077 95.5 127.077 40.5 145.231 40.5C163.385 40.5 163.385 102.5 181.538 102.5C199.692 102.5 199.692 65.5 217.846 65.5C236 65.5 236 51.5 254.154 51.5C272.308 51.5 272.308 122.5 290.462 122.5C308.615 122.5 308.615 150.5 326.769 150.5C344.923 150.5 344.923 11.5 363.077 11.5C381.231 11.5 381.231 85.5 399.385 85.5C417.538 85.5 417.538 130.5 435.692 130.5C453.846 130.5 453.846 33.5 472 33.5" stroke="var(--primary-500)" stroke-linecap="round" stroke-width="3"></path>
+<defs>
+<linearGradient gradientUnits="userSpaceOnUse" id="paint0_linear_1" x1="236" x2="236" y1="11.5" y2="160">
+<stop stop-color="var(--primary-200)" stop-opacity="0.8"></stop>
+<stop offset="1" stop-color="var(--primary-50)" stop-opacity="0"></stop>
+</linearGradient>
+</defs>
+</svg>
+</div>
+</div>
+<div class="bg-white p-6 rounded-lg border border-secondary-200 shadow-sm">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="text-lg font-semibold text-secondary-800">Top Tags</h3>
+<p class="text-sm text-secondary-500">Last 30 Days</p>
+</div>
+<div class="text-right">
+<p class="text-3xl font-bold text-secondary-800">1,500</p>
+<p class="text-sm font-medium text-green-500 flex items-center justify-end">
+<span class="material-symbols-outlined text-base mr-1">arrow_upward</span>
+                      8%
+                    </p>
+</div>
+</div>
+<div class="space-y-4 pt-2">
+<div class="grid grid-cols-[1fr_auto] items-center gap-3">
+<p class="text-sm font-medium text-secondary-600 truncate">Anxiety</p>
+<div class="w-24 h-2 bg-secondary-200 rounded-full"><div class="h-2 bg-primary-400 rounded-full" style="width: 80%;"></div></div>
+</div>
+<div class="grid grid-cols-[1fr_auto] items-center gap-3">
+<p class="text-sm font-medium text-secondary-600 truncate">Work</p>
+<div class="w-24 h-2 bg-secondary-200 rounded-full"><div class="h-2 bg-primary-400 rounded-full" style="width: 80%;"></div></div>
+</div>
+<div class="grid grid-cols-[1fr_auto] items-center gap-3">
+<p class="text-sm font-medium text-secondary-600 truncate">Depression</p>
+<div class="w-24 h-2 bg-secondary-200 rounded-full"><div class="h-2 bg-primary-400 rounded-full" style="width: 70%;"></div></div>
+</div>
+<div class="grid grid-cols-[1fr_auto] items-center gap-3">
+<p class="text-sm font-medium text-secondary-600 truncate">Self-Care</p>
+<div class="w-24 h-2 bg-secondary-200 rounded-full"><div class="h-2 bg-primary-400 rounded-full" style="width: 60%;"></div></div>
+</div>
+<div class="grid grid-cols-[1fr_auto] items-center gap-3">
+<p class="text-sm font-medium text-secondary-600 truncate">Relationships</p>
+<div class="w-24 h-2 bg-secondary-200 rounded-full"><div class="h-2 bg-primary-400 rounded-full" style="width: 40%;"></div></div>
+</div>
+<div class="grid grid-cols-[1fr_auto] items-center gap-3">
+<p class="text-sm font-medium text-secondary-600 truncate">Stress</p>
+<div class="w-24 h-2 bg-secondary-200 rounded-full"><div class="h-2 bg-primary-400 rounded-full" style="width: 30%;"></div></div>
+</div>
+</div>
+</div>
+<div class="lg:col-span-3 bg-white p-6 rounded-lg border border-secondary-200 shadow-sm">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="text-lg font-semibold text-secondary-800">Peak Posting Hours</h3>
+<p class="text-sm text-secondary-500">Last 7 Days</p>
+</div>
+<div class="text-right">
+<p class="text-3xl font-bold text-secondary-800">250 Posts</p>
+<p class="text-sm font-medium text-green-500 flex items-center justify-end">
+<span class="material-symbols-outlined text-base mr-1">arrow_upward</span>
+                          5%
+                        </p>
+</div>
+</div>
+<div class="h-64 flex items-end gap-4">
+<div class="flex-1 flex flex-col items-center gap-2">
+<div class="w-full bg-primary-100 hover:bg-primary-200 rounded-t-md transition-all" style="height: 90%;"></div>
+<p class="text-xs text-secondary-500">12 AM</p>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2">
+<div class="w-full bg-primary-100 hover:bg-primary-200 rounded-t-md transition-all" style="height: 90%;"></div>
+<p class="text-xs text-secondary-500">3 AM</p>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2">
+<div class="w-full bg-primary-300 hover:bg-primary-400 rounded-t-md transition-all" style="height: 100%;"></div>
+<p class="text-xs font-semibold text-primary-700">6 AM</p>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2">
+<div class="w-full bg-primary-100 hover:bg-primary-200 rounded-t-md transition-all" style="height: 50%;"></div>
+<p class="text-xs text-secondary-500">9 AM</p>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2">
+<div class="w-full bg-primary-100 hover:bg-primary-200 rounded-t-md transition-all" style="height: 60%;"></div>
+<p class="text-xs text-secondary-500">12 PM</p>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2">
+<div class="w-full bg-primary-100 hover:bg-primary-200 rounded-t-md transition-all" style="height: 40%;"></div>
+<p class="text-xs text-secondary-500">3 PM</p>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2">
+<div class="w-full bg-primary-100 hover:bg-primary-200 rounded-t-md transition-all" style="height: 50%;"></div>
+<p class="text-xs text-secondary-500">6 PM</p>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2">
+<div class="w-full bg-primary-100 hover:bg-primary-200 rounded-t-md transition-all" style="height: 70%;"></div>
+<p class="text-xs text-secondary-500">9 PM</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</div>
+
+</body></html>
