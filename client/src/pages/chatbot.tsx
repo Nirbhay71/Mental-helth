@@ -7,12 +7,14 @@ import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { isUnauthorizedError } from "@/lib/authUtils";
+import type { ChatMessage as DBChatMessage, User } from "@shared/schema";
 
 interface ChatMessage {
-  id: string;
+  id: number;
   content: string;
   isFromUser: boolean;
-  createdAt: string;
+  createdAt: Date | null;
+  userId: string;
 }
 
 export default function Chatbot() {
@@ -39,7 +41,7 @@ export default function Chatbot() {
     }
   }, [isAuthenticated, isLoading, toast]);
 
-  const { data: messages = [], isLoading: messagesLoading } = useQuery({
+  const { data: messages = [], isLoading: messagesLoading } = useQuery<DBChatMessage[]>({
     queryKey: ["/api/chat/messages"],
     enabled: isAuthenticated,
   });
@@ -47,7 +49,8 @@ export default function Chatbot() {
   const sendMessageMutation = useMutation({
     mutationFn: async (content: string) => {
       const response = await apiRequest("POST", "/api/chat/messages", { content });
-      return response.json();
+      const data = await response.json();
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/chat/messages"] });
@@ -126,7 +129,7 @@ export default function Chatbot() {
       socket.send(JSON.stringify({
         type: 'chat',
         content: messageContent,
-        userId: user?.id,
+        userId: (user as User)?.id,
       }));
     }
     
@@ -140,9 +143,10 @@ export default function Chatbot() {
     }
   };
 
-  const getTimeAgo = (date: string) => {
+  const getTimeAgo = (date: Date | null | string) => {
+    if (!date) return "Unknown";
     const now = new Date();
-    const messageDate = new Date(date);
+    const messageDate = typeof date === 'string' ? new Date(date) : date;
     const diffInMinutes = Math.floor((now.getTime() - messageDate.getTime()) / (1000 * 60));
     
     if (diffInMinutes < 1) return "Just now";
@@ -189,7 +193,7 @@ export default function Chatbot() {
             </Card>
           ) : (
             <div className="space-y-8" data-testid="chat-messages">
-              {messages.map((msg: ChatMessage) => (
+              {messages.map((msg) => (
                 <div
                   key={msg.id}
                   className={`flex items-start gap-4 ${msg.isFromUser ? 'justify-end' : ''}`}
@@ -217,13 +221,13 @@ export default function Chatbot() {
                       {getTimeAgo(msg.createdAt)}
                     </p>
                   </div>
-                  {msg.isFromUser && user?.profileImageUrl && (
+                  {msg.isFromUser && (user as User)?.profileImageUrl && (
                     <div 
                       className="w-10 h-10 rounded-full bg-cover bg-center flex-shrink-0"
-                      style={{ backgroundImage: `url(${user.profileImageUrl})` }}
+                      style={{ backgroundImage: `url(${(user as User).profileImageUrl})` }}
                     />
                   )}
-                  {msg.isFromUser && !user?.profileImageUrl && (
+                  {msg.isFromUser && !(user as User)?.profileImageUrl && (
                     <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
                       <span className="material-symbols-outlined text-primary-foreground">person</span>
                     </div>

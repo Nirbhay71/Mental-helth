@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
+import type { User } from "@shared/schema";
 
 export default function Sidebar() {
   const [location, navigate] = useLocation();
@@ -73,12 +74,12 @@ export default function Sidebar() {
           <span>Create Post</span>
         </Button>
         
-        {user && (
+        {(user as User) && (
           <div className="mt-4 p-3 bg-muted/50 rounded-md">
             <div className="flex items-center gap-3">
-              {user.profileImageUrl ? (
+              {(user as User).profileImageUrl ? (
                 <img 
-                  src={user.profileImageUrl} 
+                  src={(user as User).profileImageUrl!} 
                   alt="Profile" 
                   className="w-8 h-8 rounded-full object-cover"
                 />
@@ -89,13 +90,13 @@ export default function Sidebar() {
               )}
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-foreground truncate" data-testid="user-name">
-                  {user.firstName && user.lastName 
-                    ? `${user.firstName} ${user.lastName}` 
-                    : user.email?.split('@')[0] || 'User'
+                  {(user as User).firstName && (user as User).lastName 
+                    ? `${(user as User).firstName} ${(user as User).lastName}` 
+                    : (user as User).email?.split('@')[0] || 'User'
                   }
                 </p>
                 <p className="text-xs text-muted-foreground truncate" data-testid="user-email">
-                  {user.email}
+                  {(user as User).email}
                 </p>
               </div>
             </div>

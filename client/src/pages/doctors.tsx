@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAuth } from "@/hooks/useAuth";
+import type { Doctor } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { isUnauthorizedError } from "@/lib/authUtils";
@@ -31,7 +32,7 @@ export default function Doctors() {
     }
   }, [isAuthenticated, isLoading, toast]);
 
-  const { data: doctors = [], isLoading: doctorsLoading } = useQuery({
+  const { data: doctors = [], isLoading: doctorsLoading } = useQuery<Doctor[]>({
     queryKey: ["/api/doctors", selectedSpecialization],
     enabled: isAuthenticated,
   });

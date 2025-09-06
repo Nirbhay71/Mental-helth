@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { useAuth } from "@/hooks/useAuth";
+import type { Post } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { isUnauthorizedError } from "@/lib/authUtils";
@@ -28,7 +29,7 @@ export default function MyPosts() {
     }
   }, [isAuthenticated, isLoading, toast]);
 
-  const { data: posts = [], isLoading: postsLoading } = useQuery({
+  const { data: posts = [], isLoading: postsLoading } = useQuery<Post[]>({
     queryKey: ["/api/posts/my"],
     enabled: isAuthenticated,
   });
