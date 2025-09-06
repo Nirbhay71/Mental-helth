@@ -1,91 +1,62 @@
 import express, { type Request, type Response, type NextFunction } from "express";
 import http from "http";
-import path from "path"; // --- ADD THIS LINE --- to work with file paths
+import path from "path";
 import { registerRoutes } from "./routes";
-import { setupVite, serveStatic, log } from "./vite";
+import { setupVite, log } from "./vite"; // Removed serveStatic as we handle it manually now
 
-// --- Create the app only ONCE ---
 const app = express();
-const server = http.createServer(app);
+// NOTE: We don't create the server with http.createServer here because Vercel handles it.
+// We export the `app` directly for Vercel to use.
 
-// --- Middleware Setup ---
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// Custom logging middleware
-app.use((req: Request, res: Response, next: NextFunction) => {
-    const start = Date.now();
-    const path = req.path;
-    let capturedJsonResponse: Record<string, any> | undefined = undefined;
+// --- Main Application Logic ---
 
-    const originalResJson = res.json;
-    res.json = function(bodyJson: any) { // Removed extra args for simplicity and correctness
-        capturedJsonResponse = bodyJson;
-        return originalResJson.call(res, bodyJson);
-    };
-
-    res.on("finish", () => {
-        const duration = Date.now() - start;
-        if (path.startsWith("/api")) {
-            let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
-            if (capturedJsonResponse) {
-                logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
-            }
-
-            if (logLine.length > 80) {
-                logLine = logLine.slice(0, 79) + "…";
-            }
-
-            log(logLine);
-        }
-    });
-
-    next();
+// --- Define Your API Routes FIRST ---
+app.get("/api/hello", (req, res) => {
+    res.send("Hello World");
 });
 
-// --- Main Application Logic in an async function ---
-(async () => {
-    // --- Define Your API Routes ---
+// Assuming registerRoutes adds more API routes to the 'app'
+registerRoutes(app); 
 
-    // This is the example route from your first code block
-    app.get("/api/hello", (req, res) => {
-        res.send("Hello World");
-    });
-
-    // Register other routes from your routes file
-    await registerRoutes(server);
-
-    // Error handling middleware
-    app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-        const status = err.status || err.statusCode || 500;
-        const message = err.message || "Internal Server Error";
-        console.error(err); // Log the full error to the console
-        res.status(status).json({ message });
-    });
-
-    // --- Vite and Static File Setup ---
-    if (process.env.NODE_ENV === "development") {
-        // Development: Vite handles serving the frontend
+// --- Vite and Static File Setup ---
+if (process.env.NODE_ENV === "development") {
+    // In development, we need to set up Vite, but this part won't run on Vercel.
+    (async () => {
+        const server = http.createServer(app);
         await setupVite(app, server);
-    } else {
-        // --- THIS IS THE UPDATED PRODUCTION CODE ---
-        // 1. Define the path to your built frontend files
-        const buildPath = path.resolve(__dirname, '..', 'dist', 'public');
-        
-        // 2. Tell Express to serve static files from that folder
-        app.use(express.static(buildPath));
-
-        // 3. For any other request, send the index.html file
-        // This is crucial for single-page applications to work correctly
-        app.get('*', (req, res) => {
-            res.sendFile(path.join(buildPath, 'index.html'));
+        const port = parseInt(process.env.PORT || '5000', 10);
+        server.listen(port, "0.0.0.0", () => {
+            log(`Server is running for development on http://localhost:${port}`);
         });
-    }
+    })();
+} else {
+    // --- THIS IS THE PRODUCTION CODE FOR VERCEL ---
+    // 1. Define the path to your built frontend files.
+    // Vercel builds the project into the root 'dist' folder.
+    const buildPath = path.resolve(__dirname, '..', 'dist');
+    
+    // 2. Tell Express to serve static files (like JS, CSS) from that folder.
+    app.use(express.static(buildPath));
 
-    // --- Start the Server ---
-    const port = parseInt(process.env.PORT || '5000', 10);
-    server.listen(port, "0.0.0.0", () => {
-        log(`Server is running and listening on http://localhost:${port}`);
+    // 3. For any other request that is NOT an API route, send the index.html file.
+    // This is the key for Single-Page Applications (SPAs) to work.
+    app.get('*', (req, res) => {
+        res.sendFile(path.join(buildPath, 'index.html'));
     });
-})();
+}
+
+// --- Error Handling Middleware ---
+app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+    const status = err.status || err.statusCode || 500;
+    const message = err.message || "Internal Server Error";
+    console.error(err); // Log the full error to the console
+    res.status(status).json({ message });
+});
+
+
+// Export the app for Vercel to use as a serverless function
+export default app;
 
