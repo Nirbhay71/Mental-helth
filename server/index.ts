@@ -1,11 +1,12 @@
 import express, { type Request, type Response, type NextFunction } from "express";
-import http from "http"; // It's good practice to import 'http' for creating the server
+import http from "http";
+import path from "path"; // --- ADD THIS LINE --- to work with file paths
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
 // --- Create the app only ONCE ---
 const app = express();
-const server = http.createServer(app); // Create an HTTP server
+const server = http.createServer(app);
 
 // --- Middleware Setup ---
 app.use(express.json());
@@ -52,7 +53,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
     });
 
     // Register other routes from your routes file
-    await registerRoutes(server); // Pass the server instance if needed by registerRoutes
+    await registerRoutes(server);
 
     // Error handling middleware
     app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
@@ -63,11 +64,22 @@ app.use((req: Request, res: Response, next: NextFunction) => {
     });
 
     // --- Vite and Static File Setup ---
-    // Importantly, only setup Vite in development and after all other API routes
     if (process.env.NODE_ENV === "development") {
+        // Development: Vite handles serving the frontend
         await setupVite(app, server);
     } else {
-        serveStatic(app);
+        // --- THIS IS THE UPDATED PRODUCTION CODE ---
+        // 1. Define the path to your built frontend files
+        const buildPath = path.resolve(__dirname, '..', 'dist', 'public');
+        
+        // 2. Tell Express to serve static files from that folder
+        app.use(express.static(buildPath));
+
+        // 3. For any other request, send the index.html file
+        // This is crucial for single-page applications to work correctly
+        app.get('*', (req, res) => {
+            res.sendFile(path.join(buildPath, 'index.html'));
+        });
     }
 
     // --- Start the Server ---
@@ -76,3 +88,4 @@ app.use((req: Request, res: Response, next: NextFunction) => {
         log(`Server is running and listening on http://localhost:${port}`);
     });
 })();
+
