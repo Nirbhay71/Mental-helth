@@ -1,11 +1,12 @@
 import express from "express";
-const app = express();
+const app = express();   // ✅ only once
 
+// define routes here
 app.get("/api/hello", (req, res) => {
   res.send("Hello World");
 });
 
-app.listen(3000, () => console.log("Server running..."));
+export default app; // for Vercel API usage
 
 
 import express, { type Request, Response, NextFunction } from "express";
