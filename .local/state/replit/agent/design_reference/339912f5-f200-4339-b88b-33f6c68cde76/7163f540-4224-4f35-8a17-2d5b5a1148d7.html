@@ -1,0 +1,1204 @@
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Mindful Space - Mental Health Platform</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                borderRadius: {
+                    lg: "var(--radius)",
+                    md: "calc(var(--radius) - 2px)",
+                    sm: "calc(var(--radius) - 4px)",
+                },
+                colors: {
+                    background: "var(--background)",
+                    foreground: "var(--foreground)",
+                    card: {
+                        DEFAULT: "var(--card)",
+                        foreground: "var(--card-foreground)",
+                    },
+                    primary: {
+                        DEFAULT: "var(--primary)",
+                        foreground: "var(--primary-foreground)",
+                    },
+                    secondary: {
+                        DEFAULT: "var(--secondary)",
+                        foreground: "var(--secondary-foreground)",
+                    },
+                    muted: {
+                        DEFAULT: "var(--muted)",
+                        foreground: "var(--muted-foreground)",
+                    },
+                    accent: {
+                        DEFAULT: "var(--accent)",
+                        foreground: "var(--accent-foreground)",
+                    },
+                    border: "var(--border)",
+                    input: "var(--input)",
+                    ring: "var(--ring)",
+                }
+            }
+        }
+    };
+    </script>
+    <style>
+        :root {
+            --background: hsl(210 40% 98%);
+            --foreground: hsl(222.2 84% 4.9%);
+            --card: hsl(0 0% 100%);
+            --card-foreground: hsl(222.2 84% 4.9%);
+            --primary: hsl(200 98% 60%);
+            --primary-foreground: hsl(0 0% 100%);
+            --secondary: hsl(210 40% 96%);
+            --secondary-foreground: hsl(222.2 47.4% 11.2%);
+            --muted: hsl(210 40% 96%);
+            --muted-foreground: hsl(215.4 16.3% 46.9%);
+            --accent: hsl(154 72% 51%);
+            --accent-foreground: hsl(0 0% 100%);
+            --border: hsl(214.3 31.8% 91.4%);
+            --input: hsl(214.3 31.8% 91.4%);
+            --ring: hsl(200 98% 60%);
+            --radius: 0.5rem;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .page {
+            display: none;
+        }
+        
+        .page.active {
+            display: block;
+        }
+        
+        .sidebar-link {
+            transition: all 0.2s ease;
+        }
+        
+        .sidebar-link:hover {
+            background-color: hsl(var(--muted));
+        }
+        
+        .sidebar-link.active {
+            background-color: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+        }
+        
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .chat-message {
+            max-width: 70%;
+        }
+        
+        .doctor-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .doctor-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+    </style>
+</head>
+<body class="bg-background text-foreground min-h-screen">
+    <!-- @COMPONENT: LoadingSpinner -->
+    <div id="loading-spinner" class="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+    </div>
+    <!-- @END_COMPONENT: LoadingSpinner -->
+
+    <!-- LOGIN PAGE -->
+    <!-- @COMPONENT: LoginPage -->
+    <div id="login-page" class="page active">
+        <div class="flex min-h-screen items-center justify-center bg-gradient-to-br from-cyan-50 via-blue-50 to-primary/10">
+            <div class="w-full max-w-md rounded-xl bg-card/80 p-8 shadow-2xl backdrop-blur-lg border border-border">
+                <div class="mb-8 flex flex-col items-center gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
+                            <span class="material-symbols-outlined text-primary-foreground">self_improvement</span>
+                        </div>
+                        <h1 class="text-3xl font-bold text-foreground">Mindful</h1>
+                    </div>
+                    <h2 class="text-2xl font-semibold text-foreground">Welcome Back</h2>
+                    <p class="text-muted-foreground text-center">Enter your credentials to access your account.</p>
+                </div>
+                <form class="space-y-6" data-mock="true">
+                    <div class="relative">
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">email</span>
+                        <input 
+                            class="w-full rounded-lg border border-input bg-background/50 py-3 pl-10 pr-4 text-foreground shadow-sm transition duration-300 focus:border-primary focus:ring focus:ring-primary/20 focus:ring-opacity-50" 
+                            placeholder="Email" 
+                            type="email"
+                            data-mock="true"/>
+                    </div>
+                    <div class="relative">
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">lock</span>
+                        <input 
+                            class="w-full rounded-lg border border-input bg-background/50 py-3 pl-10 pr-4 text-foreground shadow-sm transition duration-300 focus:border-primary focus:ring focus:ring-primary/20 focus:ring-opacity-50" 
+                            placeholder="Password" 
+                            type="password"
+                            data-mock="true"/>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <input class="h-4 w-4 rounded border-input text-primary focus:ring-primary" id="remember-me" type="checkbox"/>
+                            <label class="ml-2 block text-sm text-muted-foreground" for="remember-me">Remember me</label>
+                        </div>
+                        <div class="text-sm">
+                            <a class="font-medium text-primary hover:text-primary/80 hover:underline" href="#" data-implementation="Password reset flow">Forgot Password?</a>
+                        </div>
+                    </div>
+                    <div>
+                        <button 
+                            type="button" 
+                            onclick="showDashboard()" 
+                            class="flex w-full justify-center rounded-lg bg-primary px-4 py-3 font-semibold text-primary-foreground shadow-md transition-all duration-300 hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                            data-event="click:authenticate">
+                            Log In
+                        </button>
+                    </div>
+                </form>
+                <p class="mt-8 text-center text-sm text-muted-foreground">
+                    Don't have an account?
+                    <a class="font-semibold text-primary hover:text-primary/80 hover:underline" href="#" onclick="showRegister()" data-implementation="Navigate to registration">Sign Up</a>
+                </p>
+            </div>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: LoginPage -->
+
+    <!-- REGISTRATION PAGE -->
+    <!-- @COMPONENT: RegistrationPage -->
+    <div id="register-page" class="page">
+        <div class="min-h-screen bg-background">
+            <!-- @COMPONENT: PublicHeader -->
+            <header class="flex items-center justify-between border-b border-border bg-card px-10 py-4">
+                <div class="flex items-center gap-3 text-foreground">
+                    <div class="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
+                        <span class="material-symbols-outlined text-primary-foreground">self_improvement</span>
+                    </div>
+                    <h1 class="text-xl font-bold">Mindful</h1>
+                </div>
+                <nav class="flex items-center gap-8">
+                    <a class="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors" href="#" data-implementation="Public navigation">Home</a>
+                    <a class="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors" href="#" data-implementation="About page">About</a>
+                    <a class="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors" href="#" data-implementation="Community preview">Community</a>
+                    <a class="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors" href="#" data-implementation="Resources page">Resources</a>
+                </nav>
+                <div class="flex items-center gap-4">
+                    <button 
+                        onclick="showLogin()" 
+                        class="flex min-w-[84px] items-center justify-center rounded-md h-10 px-4 bg-secondary text-secondary-foreground text-sm font-medium hover:bg-secondary/80 transition-colors">
+                        Log In
+                    </button>
+                </div>
+            </header>
+            <!-- @END_COMPONENT: PublicHeader -->
+
+            <main class="flex flex-1 justify-center items-center py-12 px-4">
+                <div class="w-full max-w-md bg-card rounded-xl shadow-lg p-8 space-y-6 border border-border animate-fade-in">
+                    <div class="text-center">
+                        <h2 class="text-3xl font-bold text-foreground">Create an account</h2>
+                        <p class="mt-2 text-sm text-muted-foreground">Join our community for mental well-being.</p>
+                    </div>
+                    <form class="space-y-6" data-mock="true">
+                        <div class="space-y-2">
+                            <label class="text-sm font-medium text-foreground" for="email">Email address</label>
+                            <div class="relative">
+                                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">mail</span>
+                                <input 
+                                    class="flex w-full rounded-md text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent border border-input bg-background h-12 pl-10 pr-4 text-sm font-normal" 
+                                    id="email" 
+                                    placeholder="you@example.com" 
+                                    type="email"
+                                    data-mock="true"
+                                    data-bind="user.email"/>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-sm font-medium text-foreground" for="password">Password</label>
+                            <div class="relative">
+                                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">lock</span>
+                                <input 
+                                    class="flex w-full rounded-md text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent border border-input bg-background h-12 pl-10 pr-4 text-sm font-normal" 
+                                    id="password" 
+                                    placeholder="••••••••" 
+                                    type="password"
+                                    data-mock="true"
+                                    data-bind="user.password"/>
+                            </div>
+                            <p class="text-xs text-accent mt-1 flex items-center gap-1" data-implementation="Password strength validation">
+                                <span class="material-symbols-outlined text-sm">check_circle</span> 
+                                Password is strong.
+                            </p>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-sm font-medium text-foreground" for="confirm-password">Confirm Password</label>
+                            <div class="relative">
+                                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">lock_reset</span>
+                                <input 
+                                    class="flex w-full rounded-md text-foreground focus:outline-none focus:ring-2 focus:ring-red-500 border border-red-500 bg-background h-12 pl-10 pr-4 text-sm font-normal" 
+                                    id="confirm-password" 
+                                    placeholder="••••••••" 
+                                    type="password"
+                                    data-mock="true"
+                                    data-implementation="Real-time password matching validation"/>
+                            </div>
+                            <p class="text-xs text-red-600 mt-1 flex items-center gap-1" data-mock="true">
+                                <span class="material-symbols-outlined text-sm">error</span> 
+                                Passwords do not match.
+                            </p>
+                        </div>
+                        <button 
+                            type="button" 
+                            onclick="showDashboard()" 
+                            class="w-full flex items-center justify-center rounded-md h-12 px-4 bg-primary text-primary-foreground text-sm font-bold hover:bg-primary/90 transition-opacity"
+                            data-event="click:register">
+                            Sign Up
+                        </button>
+                        <div class="text-center">
+                            <p class="text-sm text-muted-foreground">
+                                Already have an account?
+                                <a class="font-medium text-primary hover:underline" href="#" onclick="showLogin()">Log in</a>
+                            </p>
+                        </div>
+                    </form>
+                </div>
+            </main>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: RegistrationPage -->
+
+    <!-- MAIN APPLICATION LAYOUT -->
+    <!-- @COMPONENT: MainLayout -->
+    <div id="main-layout" class="page">
+        <div class="flex h-screen bg-background">
+            <!-- @COMPONENT: Sidebar -->
+            <aside class="w-80 flex-shrink-0 bg-card border-r border-border p-6 flex flex-col justify-between">
+                <div class="flex flex-col gap-8">
+                    <div class="flex flex-col">
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
+                                <span class="material-symbols-outlined text-primary-foreground">self_improvement</span>
+                            </div>
+                            <h1 class="text-xl font-bold text-foreground">Mindful Space</h1>
+                        </div>
+                        <p class="text-sm text-muted-foreground">Your mental health companion</p>
+                    </div>
+                    <nav class="flex flex-col gap-2" data-implementation="Dynamic navigation based on user permissions">
+                        <a href="#" 
+                           onclick="showPage('dashboard')" 
+                           class="sidebar-link flex items-center gap-3 px-4 py-2 rounded-md font-medium transition-colors"
+                           data-page="dashboard">
+                            <span class="material-symbols-outlined">home</span>
+                            <span>Home</span>
+                        </a>
+                        <a href="#" 
+                           onclick="showPage('my-posts')" 
+                           class="sidebar-link flex items-center gap-3 px-4 py-2 rounded-md font-medium transition-colors"
+                           data-page="my-posts">
+                            <span class="material-symbols-outlined">description</span>
+                            <span>My Posts</span>
+                        </a>
+                        <a href="#" 
+                           onclick="showPage('doctors')" 
+                           class="sidebar-link flex items-center gap-3 px-4 py-2 rounded-md font-medium transition-colors"
+                           data-page="doctors">
+                            <span class="material-symbols-outlined">group</span>
+                            <span>Doctors</span>
+                        </a>
+                        <a href="#" 
+                           onclick="showPage('analytics')" 
+                           class="sidebar-link flex items-center gap-3 px-4 py-2 rounded-md font-medium transition-colors"
+                           data-page="analytics">
+                            <span class="material-symbols-outlined">analytics</span>
+                            <span>Analytics</span>
+                        </a>
+                        <a href="#" 
+                           onclick="showPage('chatbot')" 
+                           class="sidebar-link flex items-center gap-3 px-4 py-2 rounded-md font-medium transition-colors"
+                           data-page="chatbot">
+                            <span class="material-symbols-outlined">smart_toy</span>
+                            <span>AI Assistant</span>
+                        </a>
+                    </nav>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <button 
+                        onclick="openCreatePostModal()" 
+                        class="flex items-center gap-3 px-4 py-2 rounded-md bg-accent text-accent-foreground font-medium border border-accent/20 hover:bg-accent/90 transition-colors"
+                        data-implementation="Open create post modal">
+                        <span class="material-symbols-outlined">add_circle</span>
+                        <span>Create Post</span>
+                    </button>
+                    <button 
+                        onclick="showLogin()" 
+                        class="flex items-center gap-3 px-4 py-2 rounded-md text-muted-foreground hover:bg-muted font-medium transition-colors mt-4">
+                        <span class="material-symbols-outlined">logout</span>
+                        <span>Logout</span>
+                    </button>
+                </div>
+            </aside>
+            <!-- @END_COMPONENT: Sidebar -->
+
+            <!-- @COMPONENT: MainContent -->
+            <main class="flex-1 overflow-hidden">
+                <!-- DASHBOARD/HOME PAGE -->
+                <!-- @COMPONENT: DashboardPage -->
+                <div id="dashboard-content" class="content-page active h-full overflow-y-auto p-8">
+                    <div class="max-w-4xl mx-auto animate-fade-in">
+                        <!-- Search Bar -->
+                        <div class="mb-6">
+                            <div class="relative">
+                                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground">search</span>
+                                <input 
+                                    class="w-full bg-card border border-border rounded-md shadow-sm pl-10 pr-4 py-3 text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" 
+                                    placeholder="Search posts, topics, or doctors..."
+                                    data-implementation="Real-time search with debouncing"/>
+                            </div>
+                        </div>
+
+                        <!-- Topic Tags -->
+                        <div class="flex gap-3 mb-8 overflow-x-auto pb-2" data-implementation="Dynamic topic filtering">
+                            <!-- @MAP: topics.map(topic => ( -->
+                            <button class="px-4 py-2 rounded-md bg-blue-100 text-blue-700 text-sm font-medium hover:bg-blue-200 transition-colors whitespace-nowrap" data-mock="true">Stress</button>
+                            <button class="px-4 py-2 rounded-md bg-green-100 text-green-700 text-sm font-medium hover:bg-green-200 transition-colors whitespace-nowrap" data-mock="true">Anxiety</button>
+                            <button class="px-4 py-2 rounded-md bg-purple-100 text-purple-700 text-sm font-medium hover:bg-purple-200 transition-colors whitespace-nowrap" data-mock="true">Depression</button>
+                            <button class="px-4 py-2 rounded-md bg-yellow-100 text-yellow-700 text-sm font-medium hover:bg-yellow-200 transition-colors whitespace-nowrap" data-mock="true">Mindfulness</button>
+                            <button class="px-4 py-2 rounded-md bg-pink-100 text-pink-700 text-sm font-medium hover:bg-pink-200 transition-colors whitespace-nowrap" data-mock="true">Therapy</button>
+                            <!-- @END_MAP )) -->
+                        </div>
+
+                        <!-- Community Posts -->
+                        <div class="space-y-6" data-implementation="Infinite scroll loading">
+                            <!-- @MAP: posts.map(post => ( -->
+                            <div class="bg-card border border-border rounded-lg shadow-sm flex items-start gap-4 p-4 hover:shadow-md transition-shadow" data-mock="true">
+                                <div class="flex flex-col items-center gap-1 text-muted-foreground">
+                                    <button class="hover:text-primary transition-colors" data-implementation="Upvote functionality">
+                                        <span class="material-symbols-outlined">arrow_upward</span>
+                                    </button>
+                                    <span class="font-bold text-sm" data-bind="post.votes">1.2k</span>
+                                    <button class="hover:text-red-500 transition-colors" data-implementation="Downvote functionality">
+                                        <span class="material-symbols-outlined">arrow_downward</span>
+                                    </button>
+                                </div>
+                                <div class="flex-1">
+                                    <h2 class="text-lg font-bold text-foreground" data-bind="post.title">Coping with Seasonal Affective Disorder</h2>
+                                    <p class="text-muted-foreground mt-1" data-bind="post.excerpt">Tips and strategies for managing SAD during the winter months.</p>
+                                    <div class="flex items-center gap-4 mt-4 text-sm text-muted-foreground">
+                                        <div class="flex items-center gap-1">
+                                            <span class="material-symbols-outlined text-base">chat_bubble_outline</span>
+                                            <span data-bind="post.commentCount">24 Comments</span>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <!-- @MAP: post.tags.map(tag => ( -->
+                                            <span class="px-2 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-medium" data-bind="tag.name" data-mock="true">Stress</span>
+                                            <span class="px-2 py-1 rounded-full bg-yellow-100 text-yellow-700 text-xs font-medium" data-bind="tag.name" data-mock="true">SAD</span>
+                                            <!-- @END_MAP )) -->
+                                        </div>
+                                        <div class="flex items-center gap-1 text-xs">
+                                            <span data-bind="post.timeAgo" data-mock="true">2 hours ago</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-card border border-border rounded-lg shadow-sm flex items-start gap-4 p-4 hover:shadow-md transition-shadow" data-mock="true">
+                                <div class="flex flex-col items-center gap-1 text-muted-foreground">
+                                    <button class="hover:text-primary transition-colors">
+                                        <span class="material-symbols-outlined">arrow_upward</span>
+                                    </button>
+                                    <span class="font-bold text-sm">874</span>
+                                    <button class="hover:text-red-500 transition-colors">
+                                        <span class="material-symbols-outlined">arrow_downward</span>
+                                    </button>
+                                </div>
+                                <div class="flex-1">
+                                    <h2 class="text-lg font-bold text-foreground">Mindfulness Meditation for Beginners</h2>
+                                    <p class="text-muted-foreground mt-1">A guided meditation to help you start your mindfulness journey.</p>
+                                    <div class="flex items-center gap-4 mt-4 text-sm text-muted-foreground">
+                                        <div class="flex items-center gap-1">
+                                            <span class="material-symbols-outlined text-base">chat_bubble_outline</span>
+                                            <span>18 Comments</span>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <span class="px-2 py-1 rounded-full bg-yellow-100 text-yellow-700 text-xs font-medium">Mindfulness</span>
+                                            <span class="px-2 py-1 rounded-full bg-green-100 text-green-700 text-xs font-medium">Beginner</span>
+                                        </div>
+                                        <div class="flex items-center gap-1 text-xs">
+                                            <span>4 hours ago</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-card border border-border rounded-lg shadow-sm flex items-start gap-4 p-4 hover:shadow-md transition-shadow" data-mock="true">
+                                <div class="flex flex-col items-center gap-1 text-muted-foreground">
+                                    <button class="hover:text-primary transition-colors">
+                                        <span class="material-symbols-outlined">arrow_upward</span>
+                                    </button>
+                                    <span class="font-bold text-sm">652</span>
+                                    <button class="hover:text-red-500 transition-colors">
+                                        <span class="material-symbols-outlined">arrow_downward</span>
+                                    </button>
+                                </div>
+                                <div class="flex-1">
+                                    <h2 class="text-lg font-bold text-foreground">Understanding and Managing Anxiety</h2>
+                                    <p class="text-muted-foreground mt-1">Learn about the different types of anxiety and effective management techniques.</p>
+                                    <div class="flex items-center gap-4 mt-4 text-sm text-muted-foreground">
+                                        <div class="flex items-center gap-1">
+                                            <span class="material-symbols-outlined text-base">chat_bubble_outline</span>
+                                            <span>42 Comments</span>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <span class="px-2 py-1 rounded-full bg-green-100 text-green-700 text-xs font-medium">Anxiety</span>
+                                            <span class="px-2 py-1 rounded-full bg-pink-100 text-pink-700 text-xs font-medium">Education</span>
+                                        </div>
+                                        <div class="flex items-center gap-1 text-xs">
+                                            <span>1 day ago</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- @END_MAP )) -->
+                        </div>
+                    </div>
+                </div>
+                <!-- @END_COMPONENT: DashboardPage -->
+
+                <!-- MY POSTS PAGE -->
+                <!-- @COMPONENT: MyPostsPage -->
+                <div id="my-posts-content" class="content-page h-full overflow-y-auto p-8">
+                    <div class="max-w-4xl mx-auto animate-fade-in">
+                        <div class="flex justify-between items-center mb-6">
+                            <h1 class="text-2xl font-bold text-foreground">My Posts</h1>
+                            <button 
+                                onclick="openCreatePostModal()" 
+                                class="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors">
+                                <span class="material-symbols-outlined">add</span>
+                                New Post
+                            </button>
+                        </div>
+                        
+                        <div class="space-y-6" data-implementation="User's posts with edit/delete functionality">
+                            <!-- @MAP: userPosts.map(post => ( -->
+                            <div class="bg-card border border-border rounded-lg shadow-sm flex items-start gap-4 p-4" data-mock="true">
+                                <div class="flex flex-col items-center gap-1 text-muted-foreground">
+                                    <button class="hover:text-primary transition-colors">
+                                        <span class="material-symbols-outlined">arrow_upward</span>
+                                    </button>
+                                    <span class="font-bold text-sm" data-bind="post.votes">399</span>
+                                    <button class="hover:text-red-500 transition-colors">
+                                        <span class="material-symbols-outlined">arrow_downward</span>
+                                    </button>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <h2 class="text-lg font-bold text-foreground" data-bind="post.title">The Importance of Self-Care</h2>
+                                            <p class="text-muted-foreground mt-1" data-bind="post.excerpt">Explore the benefits of self-care and discover activities that promote well-being.</p>
+                                        </div>
+                                        <div class="flex items-center gap-2 text-muted-foreground">
+                                            <button class="p-2 hover:bg-muted rounded-full transition-colors" data-implementation="Edit post functionality">
+                                                <span class="material-symbols-outlined">edit</span>
+                                            </button>
+                                            <button class="p-2 hover:bg-muted rounded-full transition-colors" data-implementation="Delete post with confirmation">
+                                                <span class="material-symbols-outlined">delete</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-4 mt-4 text-sm text-muted-foreground">
+                                        <div class="flex items-center gap-1">
+                                            <span class="material-symbols-outlined text-base">chat_bubble_outline</span>
+                                            <span data-bind="post.commentCount">29 Comments</span>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <span class="px-2 py-1 rounded-full bg-pink-100 text-pink-700 text-xs font-medium" data-bind="tag.name">Self-Care</span>
+                                        </div>
+                                        <div class="flex items-center gap-1 text-xs">
+                                            <span data-bind="post.createdAt">3 days ago</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-card border border-border rounded-lg shadow-sm flex items-start gap-4 p-4" data-mock="true">
+                                <div class="flex flex-col items-center gap-1 text-muted-foreground">
+                                    <button class="hover:text-primary transition-colors">
+                                        <span class="material-symbols-outlined">arrow_upward</span>
+                                    </button>
+                                    <span class="font-bold text-sm">215</span>
+                                    <button class="hover:text-red-500 transition-colors">
+                                        <span class="material-symbols-outlined">arrow_downward</span>
+                                    </button>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <h2 class="text-lg font-bold text-foreground">My Journey with Social Anxiety</h2>
+                                            <p class="text-muted-foreground mt-1">Sharing my personal story and what has helped me cope.</p>
+                                        </div>
+                                        <div class="flex items-center gap-2 text-muted-foreground">
+                                            <button class="p-2 hover:bg-muted rounded-full transition-colors">
+                                                <span class="material-symbols-outlined">edit</span>
+                                            </button>
+                                            <button class="p-2 hover:bg-muted rounded-full transition-colors">
+                                                <span class="material-symbols-outlined">delete</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-4 mt-4 text-sm text-muted-foreground">
+                                        <div class="flex items-center gap-1">
+                                            <span class="material-symbols-outlined text-base">chat_bubble_outline</span>
+                                            <span>15 Comments</span>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <span class="px-2 py-1 rounded-full bg-green-100 text-green-700 text-xs font-medium">Anxiety</span>
+                                            <span class="px-2 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-medium">Personal Story</span>
+                                        </div>
+                                        <div class="flex items-center gap-1 text-xs">
+                                            <span>1 week ago</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- @END_MAP )) -->
+                        </div>
+                    </div>
+                </div>
+                <!-- @END_COMPONENT: MyPostsPage -->
+
+                <!-- DOCTORS PAGE -->
+                <!-- @COMPONENT: DoctorsPage -->
+                <div id="doctors-content" class="content-page h-full overflow-y-auto p-8">
+                    <div class="max-w-7xl mx-auto animate-fade-in">
+                        <div class="mb-8">
+                            <h1 class="text-4xl font-bold text-foreground">Find a Doctor</h1>
+                            <p class="mt-2 text-muted-foreground">
+                                Browse our directory of registered doctors specializing in mental health. Request a connection or help directly from their profile.
+                            </p>
+                        </div>
+
+                        <!-- Search and Filters -->
+                        <div class="mb-8 flex gap-4">
+                            <div class="relative flex-1">
+                                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">search</span>
+                                <input 
+                                    class="w-full bg-card border border-border rounded-md pl-10 pr-4 py-3 text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" 
+                                    placeholder="Search doctors by name or specialization..."
+                                    data-implementation="Real-time doctor search"/>
+                            </div>
+                            <select class="bg-card border border-border rounded-md px-4 py-3 text-foreground focus:outline-none focus:ring-2 focus:ring-primary" data-implementation="Filter by specialization">
+                                <option>All Specializations</option>
+                                <option>Anxiety & Depression</option>
+                                <option>Trauma & PTSD</option>
+                                <option>Child & Adolescent</option>
+                                <option>Addiction & Recovery</option>
+                                <option>Couples & Family</option>
+                            </select>
+                        </div>
+
+                        <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                            <!-- @MAP: doctors.map(doctor => ( -->
+                            <!-- Profile picture of a professional female doctor in a white coat -->
+                            <div class="doctor-card flex flex-col overflow-hidden rounded-lg border border-border bg-card shadow-sm" data-mock="true">
+                                <div class="h-48 w-full bg-cover bg-center" style='background-image: url("https://images.unsplash.com/photo-1559839734-2b71ea197ec2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=600");'></div>
+                                <div class="flex flex-1 flex-col p-6">
+                                    <h3 class="text-lg font-semibold text-foreground" data-bind="doctor.name">Dr. Amelia Harper</h3>
+                                    <p class="mt-1 text-sm text-primary" data-bind="doctor.specialization">Anxiety and Depression</p>
+                                    <div class="mt-4 flex-1 space-y-2 text-sm text-muted-foreground">
+                                        <p><span class="font-medium text-foreground">Experience:</span> <span data-bind="doctor.experience" data-mock="true">8 years</span></p>
+                                        <p><span class="font-medium text-foreground">Rating:</span> <span data-bind="doctor.rating" data-mock="true">4.9/5.0</span></p>
+                                        <p><span class="font-medium text-foreground">Availability:</span> <span data-bind="doctor.nextAvailable" data-mock="true">Today, 3:00 PM</span></p>
+                                    </div>
+                                    <button 
+                                        class="mt-6 flex w-full items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
+                                        data-implementation="Send connection request to doctor">
+                                        Request Connection
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Profile picture of a professional male doctor -->
+                            <div class="doctor-card flex flex-col overflow-hidden rounded-lg border border-border bg-card shadow-sm" data-mock="true">
+                                <div class="h-48 w-full bg-cover bg-center" style='background-image: url("https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=600");'></div>
+                                <div class="flex flex-1 flex-col p-6">
+                                    <h3 class="text-lg font-semibold text-foreground">Dr. Ethan Bennett</h3>
+                                    <p class="mt-1 text-sm text-primary">Trauma and PTSD</p>
+                                    <div class="mt-4 flex-1 space-y-2 text-sm text-muted-foreground">
+                                        <p><span class="font-medium text-foreground">Experience:</span> <span data-mock="true">12 years</span></p>
+                                        <p><span class="font-medium text-foreground">Rating:</span> <span data-mock="true">4.8/5.0</span></p>
+                                        <p><span class="font-medium text-foreground">Availability:</span> <span data-mock="true">Tomorrow, 10:00 AM</span></p>
+                                    </div>
+                                    <button class="mt-6 flex w-full items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90">
+                                        Request Connection
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Profile picture of a professional female therapist -->
+                            <div class="doctor-card flex flex-col overflow-hidden rounded-lg border border-border bg-card shadow-sm" data-mock="true">
+                                <div class="h-48 w-full bg-cover bg-center" style='background-image: url("https://pixabay.com/get/g9f833d2fbf8483401b73b047dc8643c622f841398d49757bc504e4ea00ba27ece895eecbf50769a6ebe4eda59b5043d00a227706654a533847a8acf90ba0aff5_1280.jpg");'></div>
+                                <div class="flex flex-1 flex-col p-6">
+                                    <h3 class="text-lg font-semibold text-foreground">Dr. Olivia Carter</h3>
+                                    <p class="mt-1 text-sm text-primary">Child and Adolescent Psychiatry</p>
+                                    <div class="mt-4 flex-1 space-y-2 text-sm text-muted-foreground">
+                                        <p><span class="font-medium text-foreground">Experience:</span> <span data-mock="true">15 years</span></p>
+                                        <p><span class="font-medium text-foreground">Rating:</span> <span data-mock="true">4.9/5.0</span></p>
+                                        <p><span class="font-medium text-foreground">Availability:</span> <span data-mock="true">Next week</span></p>
+                                    </div>
+                                    <button class="mt-6 flex w-full items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90">
+                                        Request Connection
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Profile picture of a male counselor -->
+                            <div class="doctor-card flex flex-col overflow-hidden rounded-lg border border-border bg-card shadow-sm" data-mock="true">
+                                <div class="h-48 w-full bg-cover bg-center" style='background-image: url("https://images.unsplash.com/photo-1582750433449-648ed127bb54?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=600");'></div>
+                                <div class="flex flex-1 flex-col p-6">
+                                    <h3 class="text-lg font-semibold text-foreground">Dr. Noah Davis</h3>
+                                    <p class="mt-1 text-sm text-primary">Addiction and Recovery</p>
+                                    <div class="mt-4 flex-1 space-y-2 text-sm text-muted-foreground">
+                                        <p><span class="font-medium text-foreground">Experience:</span> <span data-mock="true">10 years</span></p>
+                                        <p><span class="font-medium text-foreground">Rating:</span> <span data-mock="true">4.7/5.0</span></p>
+                                        <p><span class="font-medium text-foreground">Availability:</span> <span data-mock="true">This week</span></p>
+                                    </div>
+                                    <button class="mt-6 flex w-full items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90">
+                                        Request Connection
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Profile picture of a female family therapist -->
+                            <div class="doctor-card flex flex-col overflow-hidden rounded-lg border border-border bg-card shadow-sm" data-mock="true">
+                                <div class="h-48 w-full bg-cover bg-center" style='background-image: url("https://images.unsplash.com/photo-1551601651-2a8555f1a136?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=600");'></div>
+                                <div class="flex flex-1 flex-col p-6">
+                                    <h3 class="text-lg font-semibold text-foreground">Dr. Sophia Evans</h3>
+                                    <p class="mt-1 text-sm text-primary">Couples and Family Therapy</p>
+                                    <div class="mt-4 flex-1 space-y-2 text-sm text-muted-foreground">
+                                        <p><span class="font-medium text-foreground">Experience:</span> <span data-mock="true">14 years</span></p>
+                                        <p><span class="font-medium text-foreground">Rating:</span> <span data-mock="true">4.8/5.0</span></p>
+                                        <p><span class="font-medium text-foreground">Availability:</span> <span data-mock="true">Next Monday</span></p>
+                                    </div>
+                                    <button class="mt-6 flex w-full items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90">
+                                        Request Connection
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Profile picture of a senior psychiatrist -->
+                            <div class="doctor-card flex flex-col overflow-hidden rounded-lg border border-border bg-card shadow-sm" data-mock="true">
+                                <div class="h-48 w-full bg-cover bg-center" style='background-image: url("https://images.unsplash.com/photo-1607990281513-2c110a25bd8c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=600");'></div>
+                                <div class="flex flex-1 flex-col p-6">
+                                    <h3 class="text-lg font-semibold text-foreground">Dr. Michael Thompson</h3>
+                                    <p class="mt-1 text-sm text-primary">General Psychiatry</p>
+                                    <div class="mt-4 flex-1 space-y-2 text-sm text-muted-foreground">
+                                        <p><span class="font-medium text-foreground">Experience:</span> <span data-mock="true">20 years</span></p>
+                                        <p><span class="font-medium text-foreground">Rating:</span> <span data-mock="true">4.9/5.0</span></p>
+                                        <p><span class="font-medium text-foreground">Availability:</span> <span data-mock="true">Tomorrow, 2:00 PM</span></p>
+                                    </div>
+                                    <button class="mt-6 flex w-full items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90">
+                                        Request Connection
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- @END_MAP )) -->
+                        </div>
+                    </div>
+                </div>
+                <!-- @END_COMPONENT: DoctorsPage -->
+
+                <!-- ANALYTICS PAGE -->
+                <!-- @COMPONENT: AnalyticsPage -->
+                <div id="analytics-content" class="content-page h-full overflow-y-auto p-8">
+                    <div class="max-w-7xl mx-auto animate-fade-in">
+                        <div class="mb-8">
+                            <h2 class="text-3xl font-bold text-foreground">Analytics Dashboard</h2>
+                            <p class="text-muted-foreground mt-1">Key insights into platform activity and user engagement.</p>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8" data-implementation="Real-time analytics data">
+                            <!-- Main Chart -->
+                            <div class="lg:col-span-2 bg-card p-6 rounded-lg border border-border shadow-sm">
+                                <div class="flex justify-between items-start mb-4">
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-foreground">Daily Active Users</h3>
+                                        <p class="text-sm text-muted-foreground">Last 7 Days</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-3xl font-bold text-foreground" data-bind="analytics.dailyActiveUsers" data-mock="true">1,250</p>
+                                        <p class="text-sm font-medium text-accent flex items-center justify-end">
+                                            <span class="material-symbols-outlined text-base mr-1">arrow_upward</span>
+                                            <span data-bind="analytics.userGrowth" data-mock="true">15%</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="h-64 flex items-end justify-center">
+                                    <!-- Simplified chart representation -->
+                                    <div class="w-full h-48 bg-gradient-to-t from-primary/20 to-primary/5 rounded-md flex items-end justify-center">
+                                        <div class="text-sm text-muted-foreground">📈 Interactive Chart Component</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Top Tags -->
+                            <div class="bg-card p-6 rounded-lg border border-border shadow-sm">
+                                <div class="flex justify-between items-start mb-4">
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-foreground">Top Tags</h3>
+                                        <p class="text-sm text-muted-foreground">Last 30 Days</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-3xl font-bold text-foreground" data-mock="true">1,500</p>
+                                        <p class="text-sm font-medium text-accent flex items-center justify-end">
+                                            <span class="material-symbols-outlined text-base mr-1">arrow_upward</span>
+                                            <span data-mock="true">8%</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="space-y-4 pt-2">
+                                    <!-- @MAP: topTags.map(tag => ( -->
+                                    <div class="grid grid-cols-[1fr_auto] items-center gap-3" data-mock="true">
+                                        <p class="text-sm font-medium text-foreground truncate" data-bind="tag.name">Anxiety</p>
+                                        <div class="w-24 h-2 bg-muted rounded-full">
+                                            <div class="h-2 bg-primary rounded-full" style="width: 80%;" data-bind="tag.percentage"></div>
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-[1fr_auto] items-center gap-3" data-mock="true">
+                                        <p class="text-sm font-medium text-foreground truncate">Depression</p>
+                                        <div class="w-24 h-2 bg-muted rounded-full">
+                                            <div class="h-2 bg-primary rounded-full" style="width: 70%;"></div>
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-[1fr_auto] items-center gap-3" data-mock="true">
+                                        <p class="text-sm font-medium text-foreground truncate">Self-Care</p>
+                                        <div class="w-24 h-2 bg-muted rounded-full">
+                                            <div class="h-2 bg-primary rounded-full" style="width: 60%;"></div>
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-[1fr_auto] items-center gap-3" data-mock="true">
+                                        <p class="text-sm font-medium text-foreground truncate">Mindfulness</p>
+                                        <div class="w-24 h-2 bg-muted rounded-full">
+                                            <div class="h-2 bg-primary rounded-full" style="width: 50%;"></div>
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-[1fr_auto] items-center gap-3" data-mock="true">
+                                        <p class="text-sm font-medium text-foreground truncate">Stress</p>
+                                        <div class="w-24 h-2 bg-muted rounded-full">
+                                            <div class="h-2 bg-primary rounded-full" style="width: 40%;"></div>
+                                        </div>
+                                    </div>
+                                    <!-- @END_MAP )) -->
+                                </div>
+                            </div>
+
+                            <!-- Peak Hours Chart -->
+                            <div class="lg:col-span-3 bg-card p-6 rounded-lg border border-border shadow-sm">
+                                <div class="flex justify-between items-start mb-4">
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-foreground">Peak Posting Hours</h3>
+                                        <p class="text-sm text-muted-foreground">Last 7 Days</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-3xl font-bold text-foreground" data-mock="true">250 Posts</p>
+                                        <p class="text-sm font-medium text-accent flex items-center justify-end">
+                                            <span class="material-symbols-outlined text-base mr-1">arrow_upward</span>
+                                            <span data-mock="true">5%</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="h-64 flex items-end gap-4">
+                                    <!-- @MAP: hourlyData.map(hour => ( -->
+                                    <div class="flex-1 flex flex-col items-center gap-2" data-mock="true">
+                                        <div class="w-full bg-primary/30 hover:bg-primary/50 rounded-t-md transition-all" style="height: 40%;" data-bind="hour.activity"></div>
+                                        <p class="text-xs text-muted-foreground" data-bind="hour.time">12 AM</p>
+                                    </div>
+                                    <div class="flex-1 flex flex-col items-center gap-2" data-mock="true">
+                                        <div class="w-full bg-primary/30 hover:bg-primary/50 rounded-t-md transition-all" style="height: 60%;"></div>
+                                        <p class="text-xs text-muted-foreground">3 AM</p>
+                                    </div>
+                                    <div class="flex-1 flex flex-col items-center gap-2" data-mock="true">
+                                        <div class="w-full bg-primary hover:bg-primary/80 rounded-t-md transition-all" style="height: 100%;"></div>
+                                        <p class="text-xs font-semibold text-primary">6 AM</p>
+                                    </div>
+                                    <div class="flex-1 flex flex-col items-center gap-2" data-mock="true">
+                                        <div class="w-full bg-primary/30 hover:bg-primary/50 rounded-t-md transition-all" style="height: 50%;"></div>
+                                        <p class="text-xs text-muted-foreground">9 AM</p>
+                                    </div>
+                                    <div class="flex-1 flex flex-col items-center gap-2" data-mock="true">
+                                        <div class="w-full bg-primary/30 hover:bg-primary/50 rounded-t-md transition-all" style="height: 70%;"></div>
+                                        <p class="text-xs text-muted-foreground">12 PM</p>
+                                    </div>
+                                    <div class="flex-1 flex flex-col items-center gap-2" data-mock="true">
+                                        <div class="w-full bg-primary/30 hover:bg-primary/50 rounded-t-md transition-all" style="height: 80%;"></div>
+                                        <p class="text-xs text-muted-foreground">3 PM</p>
+                                    </div>
+                                    <div class="flex-1 flex flex-col items-center gap-2" data-mock="true">
+                                        <div class="w-full bg-primary/30 hover:bg-primary/50 rounded-t-md transition-all" style="height: 90%;"></div>
+                                        <p class="text-xs text-muted-foreground">6 PM</p>
+                                    </div>
+                                    <div class="flex-1 flex flex-col items-center gap-2" data-mock="true">
+                                        <div class="w-full bg-primary/30 hover:bg-primary/50 rounded-t-md transition-all" style="height: 75%;"></div>
+                                        <p class="text-xs text-muted-foreground">9 PM</p>
+                                    </div>
+                                    <!-- @END_MAP )) -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- @END_COMPONENT: AnalyticsPage -->
+
+                <!-- CHATBOT PAGE -->
+                <!-- @COMPONENT: ChatbotPage -->
+                <div id="chatbot-content" class="content-page h-full flex flex-col">
+                    <div class="flex-1 overflow-y-auto p-8">
+                        <div class="max-w-4xl mx-auto animate-fade-in">
+                            <div class="mb-8 text-center">
+                                <h2 class="text-3xl font-bold text-foreground">Chat with Mindful AI</h2>
+                                <p class="mt-2 text-muted-foreground">Your personal mental wellness companion</p>
+                            </div>
+                            
+                            <div class="space-y-8" id="chat-messages" data-implementation="Real-time chat with AI using WebSocket">
+                                <!-- AI Message -->
+                                <div class="flex items-start gap-4" data-mock="true">
+                                    <!-- AI assistant avatar representing calm and professional appearance -->
+                                    <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                                        <span class="material-symbols-outlined text-primary">smart_toy</span>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-semibold text-foreground">Mindful AI</p>
+                                        <div class="mt-1 chat-message rounded-xl rounded-tl-none bg-muted px-4 py-3">
+                                            <p class="text-base text-foreground" data-bind="message.content">Hello there! I'm here to help you manage your mental health. How are you feeling today?</p>
+                                        </div>
+                                        <p class="text-xs text-muted-foreground mt-1" data-bind="message.timestamp" data-mock="true">2 minutes ago</p>
+                                    </div>
+                                </div>
+
+                                <!-- User Message -->
+                                <div class="flex items-start justify-end gap-4" data-mock="true">
+                                    <div>
+                                        <p class="text-right text-sm font-semibold text-foreground">You</p>
+                                        <div class="mt-1 chat-message rounded-xl rounded-tr-none bg-primary px-4 py-3 text-primary-foreground">
+                                            <p class="text-base" data-bind="message.content">I'm feeling a bit anxious about an upcoming presentation at work. Do you have any tips to help me manage this anxiety?</p>
+                                        </div>
+                                        <p class="text-xs text-muted-foreground mt-1 text-right" data-mock="true">1 minute ago</p>
+                                    </div>
+                                    <!-- User avatar placeholder -->
+                                    <div class="w-10 h-10 rounded-full bg-cover bg-center flex-shrink-0" style='background-image: url("https://pixabay.com/get/gfb5d93a2a7bad642b221d39241dab002cbdc789111cdba1add986184fa0f046484ea27fe137d8961ca493f63c859f382d2ff39947d830207799e04556169ee88_1280.jpg");'></div>
+                                </div>
+
+                                <!-- AI Response -->
+                                <div class="flex items-start gap-4" data-mock="true">
+                                    <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                                        <span class="material-symbols-outlined text-primary">smart_toy</span>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-semibold text-foreground">Mindful AI</p>
+                                        <div class="mt-1 chat-message rounded-xl rounded-tl-none bg-muted px-4 py-3">
+                                            <p class="text-base text-foreground">I understand that presentations can be nerve-wracking. Here are some effective techniques to help manage your anxiety:</p>
+                                            <ul class="mt-2 list-disc list-inside space-y-1 text-sm">
+                                                <li>Practice deep breathing exercises (4-7-8 technique)</li>
+                                                <li>Prepare thoroughly but don't over-rehearse</li>
+                                                <li>Visualize a successful presentation</li>
+                                                <li>Arrive early to familiarize yourself with the space</li>
+                                                <li>Remember that some nervousness is normal and can actually improve performance</li>
+                                            </ul>
+                                            <p class="mt-2 text-sm">Would you like me to guide you through a quick breathing exercise right now?</p>
+                                        </div>
+                                        <p class="text-xs text-muted-foreground mt-1" data-mock="true">Just now</p>
+                                    </div>
+                                </div>
+
+                                <!-- Typing Indicator (shown when AI is responding) -->
+                                <div class="flex items-start gap-4 hidden" id="typing-indicator">
+                                    <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                                        <span class="material-symbols-outlined text-primary">smart_toy</span>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-semibold text-foreground">Mindful AI</p>
+                                        <div class="mt-1 chat-message rounded-xl rounded-tl-none bg-muted px-4 py-3">
+                                            <div class="flex items-center gap-1">
+                                                <div class="w-2 h-2 bg-muted-foreground rounded-full animate-pulse"></div>
+                                                <div class="w-2 h-2 bg-muted-foreground rounded-full animate-pulse" style="animation-delay: 0.2s;"></div>
+                                                <div class="w-2 h-2 bg-muted-foreground rounded-full animate-pulse" style="animation-delay: 0.4s;"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Chat Input -->
+                    <div class="border-t border-border bg-card p-6">
+                        <div class="max-w-4xl mx-auto">
+                            <div class="relative">
+                                <input 
+                                    id="chat-input"
+                                    class="w-full rounded-full border border-input bg-background py-3 pl-5 pr-14 text-base text-foreground focus:border-primary focus:ring focus:ring-primary/20 focus:ring-opacity-50" 
+                                    placeholder="Type your message..."
+                                    data-implementation="Send message on Enter key"/>
+                                <button 
+                                    onclick="sendMessage()" 
+                                    class="absolute inset-y-0 right-0 flex h-full w-14 items-center justify-center rounded-r-full bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+                                    data-implementation="Send message to AI">
+                                    <span class="material-symbols-outlined">send</span>
+                                </button>
+                            </div>
+                            <p class="text-xs text-muted-foreground mt-2 text-center">
+                                This AI assistant is for general guidance only and not a replacement for professional mental health care.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <!-- @END_COMPONENT: ChatbotPage -->
+            </main>
+            <!-- @END_COMPONENT: MainContent -->
+        </div>
+    </div>
+    <!-- @END_COMPONENT: MainLayout -->
+
+    <!-- CREATE POST MODAL -->
+    <!-- @COMPONENT: CreatePostModal -->
+    <div id="create-post-modal" class="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center hidden" data-implementation="Modal for creating new posts">
+        <div class="bg-card rounded-lg border border-border shadow-lg w-full max-w-2xl mx-4 animate-fade-in">
+            <div class="flex items-center justify-between p-6 border-b border-border">
+                <h3 class="text-lg font-semibold text-foreground">Create New Post</h3>
+                <button onclick="closeCreatePostModal()" class="text-muted-foreground hover:text-foreground">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <div class="p-6 space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-foreground mb-2">Title</label>
+                    <input 
+                        type="text" 
+                        class="w-full rounded-md border border-input bg-background px-3 py-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" 
+                        placeholder="Enter post title..."
+                        data-bind="newPost.title"/>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-foreground mb-2">Content</label>
+                    <textarea 
+                        rows="6" 
+                        class="w-full rounded-md border border-input bg-background px-3 py-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" 
+                        placeholder="Share your thoughts, experiences, or questions..."
+                        data-bind="newPost.content"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-foreground mb-2">Tags</label>
+                    <input 
+                        type="text" 
+                        class="w-full rounded-md border border-input bg-background px-3 py-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" 
+                        placeholder="Add tags separated by commas (e.g., anxiety, stress, self-care)"
+                        data-bind="newPost.tags"/>
+                </div>
+                <div class="flex items-center gap-2">
+                    <input type="checkbox" id="anonymous-post" class="rounded border-input text-primary focus:ring-primary"/>
+                    <label for="anonymous-post" class="text-sm text-muted-foreground">Post anonymously</label>
+                </div>
+            </div>
+            <div class="flex justify-end gap-3 p-6 border-t border-border">
+                <button 
+                    onclick="closeCreatePostModal()" 
+                    class="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+                    Cancel
+                </button>
+                <button 
+                    onclick="submitPost()" 
+                    class="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors font-medium"
+                    data-implementation="Create new post and add to feed">
+                    Create Post
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: CreatePostModal -->
+
+    <script>
+        // TODO: Implement proper state management, API integration, and real-time features
+        
+        // Current active page state
+        <!-- @STATE: currentPage:string = 'login' -->
+        let currentPage = 'login';
+        
+        // Show loading spinner
+        function showLoading() {
+            document.getElementById('loading-spinner').classList.remove('hidden');
+        }
+        
+        // Hide loading spinner
+        function hideLoading() {
+            document.getElementById('loading-spinner').classList.add('hidden');
+        }
+        
+        // Navigation functions
+        function showLogin() {
+            showLoading();
+            setTimeout(() => {
+                document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+                document.getElementById('login-page').classList.add('active');
+                currentPage = 'login';
+                hideLoading();
+            }, 300);
+        }
+        
+        function showRegister() {
+            showLoading();
+            setTimeout(() => {
+                document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+                document.getElementById('register-page').classList.add('active');
+                currentPage = 'register';
+                hideLoading();
+            }, 300);
+        }
+        
+        function showDashboard() {
+            showLoading();
+            setTimeout(() => {
+                document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+                document.getElementById('main-layout').classList.add('active');
+                showPage('dashboard');
+                currentPage = 'dashboard';
+                hideLoading();
+            }, 500);
+        }
+        
+        function showPage(pageName) {
+            // Update sidebar active state
+            document.querySelectorAll('.sidebar-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('data-page') === pageName) {
+                    link.classList.add('active');
+                }
+            });
+            
+            // Show corresponding content
+            document.querySelectorAll('.content-page').forEach(content => {
+                content.classList.remove('active');
+                content.style.display = 'none';
+            });
+            
+            const targetContent = document.getElementById(pageName + '-content');
+            if (targetContent) {
+                targetContent.style.display = 'block';
+                targetContent.classList.add('active');
+            }
+        }
+        
+        // Modal functions
+        function openCreatePostModal() {
+            document.getElementById('create-post-modal').classList.remove('hidden');
+        }
+        
+        function closeCreatePostModal() {
+            document.getElementById('create-post-modal').classList.add('hidden');
+        }
+        
+        // Chat functionality
+        function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            
+            if (message) {
+                // TODO: Implement actual message sending to AI service
+                console.log('Sending message:', message);
+                
+                // Show typing indicator
+                document.getElementById('typing-indicator').classList.remove('hidden');
+                
+                // Clear input
+                input.value = '';
+                
+                // Simulate AI response after delay
+                setTimeout(() => {
+                    document.getElementById('typing-indicator').classList.add('hidden');
+                    // TODO: Add actual AI response to chat
+                }, 2000);
+            }
+        }
+        
+        // Submit post function
+        function submitPost() {
+            // TODO: Implement post creation logic
+            console.log('Creating new post...');
+            closeCreatePostModal();
+            
+            // Show success message
+            // TODO: Add proper notification system
+            alert('Post created successfully!');
+        }
+        
+        // Initialize chat input enter key handler
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatInput = document.getElementById('chat-input');
+            if (chatInput) {
+                chatInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        sendMessage();
+                    }
+                });
+            }
+            
+            // Close modal on escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeCreatePostModal();
+                }
+            });
+            
+            // Close modal on backdrop click
+            document.getElementById('create-post-modal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeCreatePostModal();
+                }
+            });
+        });
+        
+        // TODO: Implement real-time features
+        // - WebSocket connection for live chat
+        // - Real-time post updates
+        // - Live notification system
+        // - Real-time analytics updates
+        
+        // TODO: Implement proper authentication
+        // - JWT token management
+        // - User session handling
+        // - Protected route access
+        
+        // TODO: Implement API integration
+        // - RESTful API calls for CRUD operations
+        // - File upload for profile pictures
+        // - Search functionality
+        // - Pagination for posts and doctors
+        
+        // TODO: Implement form validation
+        // - Real-time validation feedback
+        // - Password strength checking
+        // - Email format validation
+        // - Required field validation
+    </script>
+</body>
+</html>
